@@ -7,24 +7,39 @@ window.addEventListener("load", function () {
   canvas.height = window.innerWidth;
 
   const image1 = document.getElementById("image1");
+  // individual particles
   class Particle {
     // on HTML canvas, particle as rectangle will be drawn faster than circle
-    constructor() {
-      this.x = 10;
-      this.y = 10;
+    constructor(effect) {
+      this.effect = effect;
+      this.x = Math.random() * this.effect.width;
+      this.y = Math.random() * this.effect.height;
       this.size = 30;
     }
-    draw() {
+    draw(context) {
       context.fillRect(this.x, this.y, this.size, this.size);
     }
   }
 
-  class Effect {}
-
-  const particle1 = new Particle();
-  particle1.draw();
-  function animate() {}
-
+  // handle entire effect
+  class Effect {
+    constructor(width, height) {
+      this.width = width;
+      this.height = height;
+      this.particlesArray = [];
+    }
+    init() {
+      for (let i = 0; i < 10; i++) {
+        this.particlesArray.push(new Particle(this));
+      }
+    }
+    draw(context) {
+      this.particlesArray.forEach((particle) => particle.draw(context));
+    }
+  }
+  const effect = new Effect(canvas.width, canvas.height);
+  effect.init();
+  effect.draw(context);
   // context.fillRect(0, 100, 20, 200);
   // // drawImage(imageSource, positionX, positionY, imageWidth, imageHeight)
   // context.drawImage(image1, 0, 0, 200, 200);
