@@ -20,8 +20,10 @@ window.addEventListener("load", function () {
       this.velocityX = 0;
       // Math.random() * 2 - 1;
       this.velocityY = 0;
+      // 随靠近终点逐渐减小速度的easing factor
       this.ease = Math.random() * 0.5; // easing factor, the particles speed to go back to the image
-      this.friction = 0.5;
+      // 随时间推移逐渐减小速度的fraction
+      this.friction = 0.5; // 介于0（完全的摩擦，立即停止）和1（无摩擦，不减速）之间
       // mouse move implementation
       // distance: cursor between particles
       this.distanceX = 0;
@@ -67,7 +69,7 @@ window.addEventListener("load", function () {
       // 引入一个缓动系数(easing factor/damping factor)（例如0.1），使得粒子每次只移动剩余距离的一小部分
       // 在每次调用update方法时，将粒子朝向其原始位置移动一小步。
 
-      // 应用摩擦力
+      // 应用摩擦力, 速度随时间推移逐渐减小
       this.velocityX *= this.friction;
       this.velocityY *= this.friction;
       // 更新位置
