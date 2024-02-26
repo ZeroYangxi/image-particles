@@ -27,6 +27,11 @@ window.addEventListener("load", function () {
       this.height = height;
       this.particlesArray = [];
       this.image = document.getElementById("image1");
+      this.centerX = this.width / 2;
+      this.centerY = this.height / 2;
+      // center image
+      this.x = this.centerX - this.image.width / 2;
+      this.y = this.centerY - this.image.height / 2;
     }
     init() {
       for (let i = 0; i < 10; i++) {
@@ -36,7 +41,7 @@ window.addEventListener("load", function () {
     draw(context) {
       this.particlesArray.forEach((particle) => particle.draw(context));
       // drawImage(imageSource, positionX, positionY, imageWidth, imageHeight)
-      context.drawImage(this.image, 0, 0, 200, 200);
+      context.drawImage(this.image, this.x, this.y);
     }
   }
   const effect = new Effect(canvas.width, canvas.height);
