@@ -3,8 +3,8 @@ window.addEventListener("load", function () {
   const canvas = document.getElementById("canvas1");
   const context = canvas.getContext("2d");
 
-  canvas.width = window.innerHeight;
-  canvas.height = window.innerWidth;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
   // individual particles
   class Particle {
@@ -20,19 +20,59 @@ window.addEventListener("load", function () {
       this.velocityX = 0;
       // Math.random() * 2 - 1;
       this.velocityY = 0;
-      this.ease = Math.random() * 0.1; // easing factor, the particles speed to go back to the image
+      this.ease = Math.random() * 0.5; // easing factor, the particles speed to go back to the image
+      this.friction = 0.5;
+      // mouse move implementation
+      // distance: cursor between particles
+      this.distanceX = 0;
+      this.distanceY = 0;
+      this.distance = 0;
+      // force: 因鼠标移动而作用于粒子上的力
+      // force的值是负的，意味着力是将粒子从鼠标位置推开。
+      this.force = 0;
+      this.angle = 0; // direction of articles
     }
     draw(context) {
       context.fillStyle = this.color;
       context.fillRect(this.x, this.y, this.size, this.size);
     }
     update() {
+      // the distance between mouse and current location
+      this.distanceX = this.effect.mouse.x - this.x;
+      this.distanceY = this.effect.mouse.y - this.y;
+      // 勾股定理算距离，remove Math.sqrt(）for performance reason
+      this.distance =
+        this.distanceX * this.distanceX + this.distanceY * this.distanceY;
+      // particles push harder when near mouse
+      // 去掉除以0的错误，同时让力变大
+      const forceMultiplier = 100; // 增加鼠标影响力
+      if (this.distance === 0) {
+        this.force = -this.effect.mouse.radius * forceMultiplier;
+      } else {
+        this.force =
+          (-this.effect.mouse.radius * forceMultiplier) / this.distance;
+      }
+
+      if (this.distance < this.effect.mouse.radius) {
+        // Math.atan2() 返回从原点 (0,0) 到 (x,y) 点的线段与 x 轴正方向之间的平面角度 (弧度值)，也就是 Math.atan2(y,x)
+        // -PI ~ PI, 参数接受(y, x)
+        this.angle = Math.atan2(this.distanceY, this.distanceX);
+        // 更新速度
+        this.velocityX += this.force * Math.cos(this.angle); // cos把角度转换为一个01~1的
+        this.velocityY += this.force * Math.sin(this.angle);
+      }
+
       // particle recreates itself,
       // particles are aware of the difference of their location to original location
       // 引入一个缓动系数(easing factor/damping factor)（例如0.1），使得粒子每次只移动剩余距离的一小部分
       // 在每次调用update方法时，将粒子朝向其原始位置移动一小步。
-      this.x += (this.originX - this.x) * this.ease;
-      this.y += (this.originY - this.y) * this.ease;
+
+      // 应用摩擦力
+      this.velocityX *= this.friction;
+      this.velocityY *= this.friction;
+      // 更新位置
+      this.x += this.velocityX + (this.originX - this.x) * this.ease;
+      this.y += this.velocityY + (this.originY - this.y) * this.ease;
     }
     warp() {
       this.x = Math.random() * this.effect.width;
@@ -56,6 +96,15 @@ window.addEventListener("load", function () {
       this.gap = 3;
       // gap for pixelated image, the lower the more pixels
       // lower means higher resolution, but slower
+      this.mouse = {
+        radius: 300, // area around the cursor, between cursor and particles
+        x: undefined,
+        y: undefined,
+      };
+      window.addEventListener("mousemove", (event) => {
+        this.mouse.x = event.x;
+        this.mouse.y = event.y;
+      });
     }
 
     // initialize particles that recreate image
@@ -101,12 +150,12 @@ window.addEventListener("load", function () {
     effect.update();
     requestAnimationFrame(animate);
   }
-  animate();
-
   // warp button
   const warpButton = document.getElementById("warpButton");
   warpButton.addEventListener("click", function () {
     effect.warp();
     console.log("clicked");
   });
+
+  animate();
 });
