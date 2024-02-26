@@ -20,6 +20,7 @@ window.addEventListener("load", function () {
       this.velocityX = 0;
       // Math.random() * 2 - 1;
       this.velocityY = 0;
+      this.ease = Math.random() * 0.1; // easing factor, the particles speed to go back to the image
     }
     draw(context) {
       context.fillStyle = this.color;
@@ -30,8 +31,8 @@ window.addEventListener("load", function () {
       // particles are aware of the difference of their location to original location
       // 引入一个缓动系数(easing factor/damping factor)（例如0.1），使得粒子每次只移动剩余距离的一小部分
       // 在每次调用update方法时，将粒子朝向其原始位置移动一小步。
-      this.x += (this.originX - this.x) * 0.01;
-      this.y += (this.originY - this.y) * 0.01;
+      this.x += (this.originX - this.x) * this.ease;
+      this.y += (this.originY - this.y) * this.ease;
     }
   }
 
