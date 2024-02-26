@@ -11,8 +11,8 @@ window.addEventListener("load", function () {
     // on HTML canvas, particle as rectangle will be drawn faster than circle
     constructor(effect, x, y, color) {
       this.effect = effect;
-      this.x = x;
-      this.y = y;
+      this.x = Math.random() * this.effect.width;
+      this.y = Math.random() * this.effect.height;
       this.originX = Math.floor(x); // original positionX of pixel in the image
       this.originY = Math.floor(y); // original positionY pf pixel in the image
       this.color = color; //rgb color
@@ -26,9 +26,12 @@ window.addEventListener("load", function () {
       context.fillRect(this.x, this.y, this.size, this.size);
     }
     update() {
-      // particles recreate itself, being aware of the difference of them
-      this.x += this.originX - this.x;
-      this.y += this.originY - this.y;
+      // particle recreates itself,
+      // particles are aware of the difference of their location to original location
+      // 引入一个缓动系数(easing factor/damping factor)（例如0.1），使得粒子每次只移动剩余距离的一小部分
+      // 在每次调用update方法时，将粒子朝向其原始位置移动一小步。
+      this.x += (this.originX - this.x) * 0.01;
+      this.y += (this.originY - this.y) * 0.01;
     }
   }
 
@@ -81,7 +84,7 @@ window.addEventListener("load", function () {
   }
   const effect = new Effect(canvas.width, canvas.height);
   effect.init(context);
-  console.log(effect.particlesArray);
+  // console.log(effect.particlesArray);
 
   function animate() {
     context.clearRect(0, 0, canvas.width, canvas.height);
