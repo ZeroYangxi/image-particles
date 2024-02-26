@@ -11,21 +11,24 @@ window.addEventListener("load", function () {
     // on HTML canvas, particle as rectangle will be drawn faster than circle
     constructor(effect, x, y, color) {
       this.effect = effect;
-      this.x = Math.random() * this.effect.width;
-      this.y = Math.random() * this.effect.height;
+      this.x = x;
+      this.y = y;
       this.originX = Math.floor(x); // original positionX of pixel in the image
       this.originY = Math.floor(y); // original positionY pf pixel in the image
       this.color = color; //rgb color
-      this.size = 10;
-      this.velocityX = Math.random() * 2 - 1;
-      this.velocityY = Math.random() * 2 - 1;
+      this.size = this.effect.gap - 1; // size of particles match gap, minus 1 to get some spaces
+      this.velocityX = 0;
+      // Math.random() * 2 - 1;
+      this.velocityY = 0;
     }
     draw(context) {
+      context.fillStyle = this.color;
       context.fillRect(this.x, this.y, this.size, this.size);
     }
     update() {
-      this.x += this.velocityX;
-      this.y += this.velocityY;
+      // particles recreate itself, being aware of the difference of them
+      this.x += this.originX - this.x;
+      this.y += this.originY - this.y;
     }
   }
 
@@ -41,9 +44,12 @@ window.addEventListener("load", function () {
       // center image
       this.x = this.centerX - this.image.width / 2;
       this.y = this.centerY - this.image.height / 2;
-      this.gap = 5; // gap for pixelated image
+      this.gap = 3;
+      // gap for pixelated image, the lower the more pixels
+      // lower means higher resolution, but slower
     }
-    // particles recreating image
+
+    // initialize particles that recreate image
     init(context) {
       context.drawImage(this.image, this.x, this.y);
       const pixels = context.getImageData(0, 0, this.width, this.height).data; //
@@ -53,13 +59,13 @@ window.addEventListener("load", function () {
       for (let y = 0; y < this.height; y += this.gap) {
         for (let x = 0; x < this.width; x += this.gap) {
           const index = (y * this.width + x) * 4;
-          const red = pixels[index];
-          const green = pixels[index + 1];
-          const blue = pixels[index + 2];
           const alpha = pixels[index + 3]; //opacity
-          const color = `rgb(${red},${green},${blue})`;
-          // each pixel is represented by red, green, blue, alpha in the array, 所以乘4
           if (alpha > 0) {
+            const red = pixels[index];
+            const green = pixels[index + 1];
+            const blue = pixels[index + 2];
+            const color = `rgb(${red}, ${green}, ${blue})`;
+            // each pixel is represented by red, green, blue, alpha in the array, 所以乘4
             this.particlesArray.push(new Particle(this, x, y, color));
           }
         }
@@ -75,6 +81,7 @@ window.addEventListener("load", function () {
   }
   const effect = new Effect(canvas.width, canvas.height);
   effect.init(context);
+  console.log(effect.particlesArray);
 
   function animate() {
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -82,5 +89,5 @@ window.addEventListener("load", function () {
     effect.update();
     requestAnimationFrame(animate);
   }
-  // animate();
+  animate();
 });
