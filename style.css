@@ -1,6 +1,19 @@
 * {
   margin: 0;
   padding: 0;
+  font-family: "Bangers", cursive;
+}
+
+h1 {
+  font-size: 40px;
+  margin: 10px;
+  margin-top: 20px;
+  padding: 10px;
+}
+
+#imageInput {
+  margin: 5px;
+  padding: 10px;
 }
 
 #canvas1 {
