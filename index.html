@@ -11,16 +11,10 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <!-- <script src="image-to-base64.js"></script> -->
     <script src="script.js"></script>
   </head>
   <body>
-    <!-- Upload image and convert to base64 string code -->
-    <section id="imageUpload">
-      <h1>Wanna convert your image into particles? Upload Your Image!</h1>
-      <input type="file" id="imageInput" />
-      <div id="result"></div>
-    </section>
-
     <canvas id="canvas1"></canvas>
 
     <!-- image to the base64 string code -->
@@ -32,9 +26,19 @@
       "
       />
     </section>
+
+    <!-- Upload image and convert to base64 string code -->
+    <section id="imageUpload">
+      <h1>Wanna convert your image into particles? Upload Your Image!</h1>
+    </section>
+
+    <!-- Warp Button -->
     <div class="controls">
+      <input type="file" id="imageInput" />
+      <br />
+      <button id="convertButton">Convert your Image!</button>
+      <br />
       <button id="warpButton">Warp</button>
     </div>
-    <script src="image-to-base64.js"></script>
   </body>
 </html>

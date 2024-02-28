@@ -26,6 +26,7 @@ img {
 
 .controls {
   position: absolute;
+  margin: 10px;
   z-index: 100;
 }
 
@@ -43,4 +44,11 @@ button {
 button:hover {
   color: black;
   background: white;
+}
+
+#convert-button {
+  margin: 0px;
+  padding: 10px;
+  font-size: 35px;
+  z-index: 100;
 }

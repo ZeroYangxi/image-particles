@@ -1,10 +1,13 @@
-window.addEventListener("load", function () {
+document.addEventListener("DOMContentLoaded", function () {
   // after loaded
+  let base64 = 0;
   const canvas = document.getElementById("canvas1");
   const context = canvas.getContext("2d");
 
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+
+  let image = document.getElementById("image1");
 
   // individual particles
   class Particle {
@@ -89,7 +92,7 @@ window.addEventListener("load", function () {
       this.width = width;
       this.height = height;
       this.particlesArray = [];
-      this.image = document.getElementById("image1");
+      this.image = image;
       this.centerX = this.width / 2;
       this.centerY = this.height / 2;
       // center image
@@ -142,8 +145,10 @@ window.addEventListener("load", function () {
       this.particlesArray.forEach((particle) => particle.warp());
     }
   }
+
   const effect = new Effect(canvas.width, canvas.height);
   effect.init(context);
+
   // console.log(effect.particlesArray);
 
   function animate() {
@@ -156,8 +161,52 @@ window.addEventListener("load", function () {
   const warpButton = document.getElementById("warpButton");
   warpButton.addEventListener("click", function () {
     effect.warp();
-    console.log("clicked");
   });
 
   animate();
+
+  // 当文件输入发生变化时执行这个函数
+  document
+    .getElementById("imageInput")
+    .addEventListener("change", function (event) {
+      // 获取用户选择的文件
+      let file = event.target.files[0];
+      // 确保文件存在
+      if (file) {
+        let reader = new FileReader();
+
+        // 设置当读取操作完成后要执行的函数
+        reader.onload = function (e) {
+          // 获取转换后的Base64编码
+          base64 = e.target.result;
+          console.log(base64);
+
+          // // 显示Base64编码，或者将其用作图片预览
+          // document.getElementById("result").innerHTML =
+          //   '<p>Base64 code:</p><textarea rows="5" cols="70">' +
+          //   base64 +
+          //   '<h2>Image Preview:</h2></textarea><br><br><img src="' +
+          //   base64 +
+          //   '" alt="Image Preview"/>';
+        };
+
+        // 以DataURL的形式读取文件，结果会是一个Base64编码的字符串
+        reader.readAsDataURL(file);
+      }
+    });
+
+  image.onload = function () {
+    // 清空现有的粒子数组以准备新的效果
+    effect.particlesArray = [];
+    // 重新初始化效果以匹配新的图片
+    effect.init(context);
+    animate();
+  };
+
+  //convert button
+  const convertButton = document.getElementById("convertButton");
+  convertButton.addEventListener("click", function () {
+    image.src = `${base64}`; //替换新的
+    image.onload();
+  });
 });
